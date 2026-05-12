@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArthAI — Financial Clarity for Indian Business</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --navy-light: #243660;
+    --gold: #D4A017;
+    --gold-light: #F0C040;
+    --bg: #F7F5F0;
+    --white: #FFFFFF;
+    --text: #1B2A4A;
+    --text-muted: #6B7A99;
+    --border: #E2DDD5;
+    --danger-bg: #FEF0F0;
+    --danger: #C0392B;
+    --warning-bg: #FEF8E8;
+    --warning: #B7770D;
+    --success-bg: #EDF7ED;
+    --success: #27773A;
+    --info-bg: #EBF4FF;
+    --info: #1A5FA8;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(27,42,74,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Screens ── */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 28px;
+  }
+
+  .logo-bar {
+    border-radius: 2px;
+    width: 6px;
+  }
+
+  .logo-wordmark {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+  }
+
+  .logo-wordmark span { color: var(--gold); }
+
+  /* ── HERO SCREEN ── */
+  #screen-welcome {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    background: var(--white);
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--info-bg);
+    color: var(--info);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.5px;
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    color: var(--navy);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    max-width: 680px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero p {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 500px;
+    margin: 0 auto 2rem;
+  }
+
+  .btn-primary {
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    padding: 14px 36px;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--navy);
+    border: 1.5px solid var(--border);
+    padding: 13px 28px;
+    border-radius: var(--radius);
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: var(--navy); background: #F0EEE8; }
+
+  .trust-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .trust-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--success);
+  }
+
+  /* ── PATH SCREEN ── */
+  #screen-path {
+    align-items: center;
+    padding: 2rem;
+  }
+
+  .path-container {
+    max-width: 700px;
+    width: 100%;
+    margin: 2rem auto;
+  }
+
+  .path-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+  }
+
+  .path-sub {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 15px;
+  }
+
+  .path-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 560px) { .path-cards { grid-template-columns: 1fr; } }
+
+  .path-card {
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    text-align: left;
+  }
+
+  .path-card:hover {
+    border-color: var(--navy);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+
+  .path-card.selected {
+    border-color: var(--gold);
+    background: #FFFBF0;
+  }
+
+  .path-icon {
+    font-size: 28px;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .path-card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 0.4rem;
+  }
+
+  .path-card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .path-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 0.75rem;
+  }
+
+  .tag-quick { background: var(--success-bg); color: var(--success); }
+  .tag-detailed { background: var(--info-bg); color: var(--info); }
+
+  /* ── FORM ── */
+  .form-container {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .form-section {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+  }
+
+  .form-section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+    margin-bottom: 5px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  input:focus, select:focus { border-color: var(--navy); }
+  input::placeholder { color: #B0BAD0; }
+
+  .input-prefix {
+    position: relative;
+  }
+
+  .input-prefix span {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .input-prefix input { padding-left: 28px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  @media (max-width: 500px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* ── UPLOAD AREA ── */
+  .upload-area {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: var(--white);
+  }
+
+  .upload-area:hover, .upload-area.dragover {
+    border-color: var(--navy);
+    background: #F0EEF8;
+  }
+
+  .upload-icon { font-size: 40px; margin-bottom: 1rem; display: block; }
+  .upload-area h3 { font-size: 15px; color: var(--navy); margin-bottom: 0.4rem; }
+  .upload-area p { font-size: 13px; color: var(--text-muted); }
+  .upload-area input[type="file"] { display: none; }
+
+  .file-selected {
+    background: var(--success-bg);
+    border-color: var(--success);
+    padding: 1rem 1.5rem;
+  }
+
+  .file-selected p { color: var(--success); font-weight: 500; }
+
+  .trust-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--info-bg);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 1rem;
+    font-size: 12.5px;
+    color: var(--info);
+  }
+
+  /* ── LOADING ── */
+  #screen-loading {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: var(--white);
+  }
+
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--navy);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1.5rem;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+  }
+
+  .loading-sub { font-size: 14px; color: var(--text-muted); }
+
+  /* ── REPORT SCREEN ── */
+  #screen-report {
+    background: var(--bg);
+  }
+
+  .report-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .report-header {
+    background: var(--navy);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+    color: var(--white);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .report-biz { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 3px; }
+  .report-meta { font-size: 12px; opacity: 0.6; }
+  .report-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(212,160,23,0.2);
+    color: var(--gold-light);
+    border: 0.5px solid rgba(212,160,23,0.4);
+    white-space: nowrap;
+  }
+
+  /* Health Score */
+  .health-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+  }
+
+  .health-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .health-label { font-size: 13px; font-weight: 500; }
+  .health-score { font-size: 13px; font-weight: 600; }
+
+  .health-track {
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #E24B4A 0%, #EF9F27 40%, #639922 75%, #639922 100%);
+    position: relative;
+    margin-bottom: 4px;
+  }
+
+  .health-needle {
+    position: absolute;
+    top: -5px;
+    width: 4px;
+    height: 20px;
+    background: var(--navy);
+    border-radius: 2px;
+    transform: translateX(-50%);
+    transition: left 1s ease;
+  }
+
+  .health-axis {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* Stats row */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1rem;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 4px; }
+  .stat-value { font-size: 20px; font-weight: 600; color: var(--navy); }
+
+  /* Alert boxes */
+  .alert {
+    border-left: 3px solid;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 12px 14px;
+    margin-bottom: 0.75rem;
+  }
+
+  .alert.critical { border-color: #A32D2D; background: #FEF0F0; }
+  .alert.warning { border-color: #B7770D; background: #FEF8E8; }
+  .alert.success { border-color: #27773A; background: #EDF7ED; }
+  .alert.info { border-color: #1A5FA8; background: #EBF4FF; }
+
+  .alert-title { font-size: 11px; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .alert.critical .alert-title { color: #A32D2D; }
+  .alert.warning .alert-title { color: #B7770D; }
+  .alert.success .alert-title { color: #27773A; }
+  .alert.info .alert-title { color: #1A5FA8; }
+  .alert-body { font-size: 13px; line-height: 1.6; color: var(--text); }
+
+  /* Section titles */
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    color: var(--navy);
+    margin: 1.5rem 0 0.75rem;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Month grid */
+  .month-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 1rem; }
+  @media (max-width: 480px) { .month-grid { grid-template-columns: 1fr; } }
+
+  .month-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+  }
+
+  .month-name { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+  .month-rev { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 2px; }
+  .month-margin { font-size: 11px; }
+
+  /* Bar chart */
+  .bar-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .bar-label { font-size: 12px; color: var(--text-muted); width: 110px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 8px; background: #EDE9E2; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 1.2s ease; }
+  .bar-val { font-size: 12px; font-weight: 500; width: 80px; text-align: right; color: var(--navy); }
+
+  /* Insight rows */
+  .insight-card {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 0.6rem;
+    font-size: 13px;
+    line-height: 1.6;
+    border: 1px solid var(--border);
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-right: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-red { background: #FEF0F0; color: #A32D2D; }
+  .tag-amber { background: #FEF8E8; color: #B7770D; }
+  .tag-green { background: #EDF7ED; color: #27773A; }
+  .tag-blue { background: #EBF4FF; color: #1A5FA8; }
+
+  /* Recommendations */
+  .rec-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .rec-item:last-child { border-bottom: none; }
+  .rec-num { font-size: 11px; font-weight: 600; color: var(--gold); min-width: 24px; padding-top: 2px; }
+  .rec-text { font-size: 13px; line-height: 1.6; color: var(--text); margin-bottom: 3px; }
+  .rec-impact { font-size: 11px; font-weight: 500; }
+
+  /* Report footer */
+  .report-footer {
+    margin-top: 2rem;
+    padding: 1.2rem 1.5rem;
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-text { font-size: 11px; color: var(--text-muted); }
+  .footer-text a { color: var(--navy); text-decoration: none; font-weight: 500; }
+
+  .btn-restart {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-restart:hover { background: var(--gold-light); }
+
+  .powered { text-align: center; font-size: 11px; color: #C0BAB0; margin-top: 1.5rem; }
+
+  /* Error */
+  .error-box {
+    background: var(--danger-bg);
+    border: 1px solid #FBBABA;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--danger);
+    margin-top: 1rem;
+    display: none;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    margin-bottom: 2rem;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* Back button */
+  .back-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .back-btn:hover { color: var(--navy); }
+
+  .white-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SCREEN 1: WELCOME ═══════════════ -->
+<div id="screen-welcome" class="screen active">
+  <nav>
+    <a href="#" class="logo">
+      <div class="logo-icon">
+        <div class="logo-bar" style="height:10px;background:#1B2A4A;opacity:0.5;"></div>
+        <div class="logo-bar" style="height:16px;background:#1B2A4A;opacity:0.75;"></div>
+        <div class="logo-bar" style="height:24px;background:#D4A017;"></div>
+      </div>
+      <span class="logo-wordmark">Arth<span>AI</span></span>
+    </a>
+  </nav>
+
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem;">
+    <div class="hero">
+      <div class="hero-badge">Built for Indian Business</div>
+      <h1>Understand your finances<br><em>in plain language.</em></h1>
+      <p>Upload your numbers and get a clear financial insight report — no CA jargon, no complexity. Just clarity.</p>
+      <button class="btn-primary" onclick="goTo('screen-path')">
+        Get My Free Report &nbsp;→
+      </button>
+      <div class="trust-row">
+        <div class="trust-item"><div class="trust-dot"></div> Data never leaves your browser</div>
+        <div class="trust-item"><div class="trust-dot"></div> No login required</div>
+        <div class="trust-item"><div class="trust-dot"></div> 100% free</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SCREEN 2: PATH SELECTION ═══════════════ -->
+<div id="screen-path" class="screen">
+  <nav>
+    <a href="#" class="logo" onclick="goTo('screen-welcome');return false;">
+      <div class="logo-icon">
+        <div class="logo-bar" style="height:10px;background:#1B2A4A;opacity:0.5;"></div>
+        <div class="logo-bar" style="height:16px;background:#1B2A4A;opacity:0.75;"></div>
+        <div class="logo-bar" style="height:24px;background:#D4A017;"></div>
+      </div>
+      <span class="logo-wordmark">Arth<span>AI</span></span>
+    </a>
+  </nav>
+
+  <div style="flex:1;padding:2rem 1.5rem;">
+    <div class="path-container">
+      <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+      <button class="back-btn" onclick="goTo('screen-welcome')">← Back</button>
+      <h2 class="path-title">How would you like to share your data?</h2>
+      <p class="path-sub">Choose the option that works best for you. Both are equally private and secure.</p>
+
+      <div class="path-cards">
+        <div class="path-card" onclick="selectPath('manual')">
+          <span class="path-icon">✏️</span>
+          <h3>Type my numbers</h3>
+          <p>Enter your revenue and expenses directly. Works for anyone — no spreadsheet needed.</p>
+          <span class="path-tag tag-quick">Quick — 60 seconds</span>
+        </div>
+        <div class="path-card" onclick="selectPath('upload')">
+          <span class="path-icon">📊</span>
+          <h3>Upload Excel / CSV</h3>
+          <p>Upload your Tally export or existing spreadsheet for a more detailed analysis.</p>
+          <span class="path-tag tag-detailed">Detailed report</span>
+        </div>
+      </div>
+
+      <div class="trust-note">
+        🔒 Your financial data is read locally in your browser and never stored on any server.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SCREEN 3A: MANUAL ENTRY ═══════════════ -->
+<div id="screen-manual" class="screen">
+  <nav>
+    <a href="#" class="logo" onclick="goTo('screen-welcome');return false;">
+      <div class="logo-icon">
+        <div class="logo-bar" style="height:10px;background:#1B2A4A;opacity:0.5;"></div>
+        <div class="logo-bar" style="height:16px;background:#1B2A4A;opacity:0.75;"></div>
+        <div class="logo-bar" style="height:24px;background:#D4A017;"></div>
+      </div>
+      <span class="logo-wordmark">Arth<span>AI</span></span>
+    </a>
+  </nav>
+
+  <div style="flex:1;padding:2rem 1.5rem;overflow-y:auto;">
+    <div class="form-container">
+      <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+      <button class="back-btn" onclick="goTo('screen-path')">← Back</button>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--navy);margin-bottom:0.3rem;">Tell us about your business</h2>
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:1.5rem;">All amounts in ₹. Enter monthly figures.</p>
+
+      <!-- Business Info -->
+      <div class="form-section">
+        <div class="form-section-title">Business Details</div>
+        <div class="form-group">
+          <label>Business Name</label>
+          <input type="text" id="m-biz-name" placeholder="e.g. Sharma Textiles" />
+        </div>
+        <div class="form-group">
+          <label>Business Type</label>
+          <select id="m-biz-type">
+            <option value="">Select your business type</option>
+            <option>Clothing / Fashion Brand</option>
+            <option>Manufacturing Unit</option>
+            <option>Retail Shop</option>
+            <option>Service Agency</option>
+            <option>Freelancer / Consultant</option>
+            <option>Food & Beverage</option>
+            <option>Ecommerce Store</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Biggest Challenge Right Now</label>
+          <select id="m-challenge">
+            <option value="">Select your biggest challenge</option>
+            <option>Understanding where money is going</option>
+            <option>Cash flow running tight</option>
+            <option>Marketing costs too high</option>
+            <option>Profit margins shrinking</option>
+            <option>Preparing for expansion</option>
+            <option>Managing debt or loans</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Month 1 -->
+      <div class="form-section">
+        <div class="form-section-title">Month 1 Financials</div>
+        <div class="form-group">
+          <label>Month Name</label>
+          <input type="text" id="m1-name" placeholder="e.g. January" />
+        </div>
+        <div class="form-group">
+          <label>Total Revenue</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="m1-rev" placeholder="0" /></div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Raw Material / Inventory</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m1-material" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Salary / Payroll</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m1-salary" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Marketing / Ads</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m1-marketing" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Rent</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m1-rent" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Electricity / Utilities</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m1-electricity" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Other Expenses</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m1-other" placeholder="0" /></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Month 2 -->
+      <div class="form-section">
+        <div class="form-section-title">Month 2 Financials</div>
+        <div class="form-group">
+          <label>Month Name</label>
+          <input type="text" id="m2-name" placeholder="e.g. February" />
+        </div>
+        <div class="form-group">
+          <label>Total Revenue</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="m2-rev" placeholder="0" /></div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Raw Material / Inventory</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m2-material" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Salary / Payroll</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m2-salary" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Marketing / Ads</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m2-marketing" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Rent</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m2-rent" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Electricity / Utilities</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m2-electricity" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Other Expenses</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m2-other" placeholder="0" /></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Month 3 -->
+      <div class="form-section">
+        <div class="form-section-title">Month 3 Financials</div>
+        <div class="form-group">
+          <label>Month Name</label>
+          <input type="text" id="m3-name" placeholder="e.g. March" />
+        </div>
+        <div class="form-group">
+          <label>Total Revenue</label>
+          <div class="input-prefix"><span>₹</span><input type="number" id="m3-rev" placeholder="0" /></div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Raw Material / Inventory</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m3-material" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Salary / Payroll</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m3-salary" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Marketing / Ads</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m3-marketing" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Rent</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m3-rent" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Electricity / Utilities</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m3-electricity" placeholder="0" /></div>
+          </div>
+          <div class="form-group">
+            <label>Other Expenses</label>
+            <div class="input-prefix"><span>₹</span><input type="number" id="m3-other" placeholder="0" /></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="manual-error" class="error-box">Please fill in your business name, type, and at least one month of revenue data.</div>
+
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;" onclick="submitManual()">
+        Generate My Report →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SCREEN 3B: UPLOAD ═══════════════ -->
+<div id="screen-upload" class="screen">
+  <nav>
+    <a href="#" class="logo" onclick="goTo('screen-welcome');return false;">
+      <div class="logo-icon">
+        <div class="logo-bar" style="height:10px;background:#1B2A4A;opacity:0.5;"></div>
+        <div class="logo-bar" style="height:16px;background:#1B2A4A;opacity:0.75;"></div>
+        <div class="logo-bar" style="height:24px;background:#D4A017;"></div>
+      </div>
+      <span class="logo-wordmark">Arth<span>AI</span></span>
+    </a>
+  </nav>
+
+  <div style="flex:1;padding:2rem 1.5rem;overflow-y:auto;">
+    <div class="form-container">
+      <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+      <button class="back-btn" onclick="goTo('screen-path')">← Back</button>
+      <h2 style="font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--navy);margin-bottom:0.3rem;">Upload your spreadsheet</h2>
+      <p style="color:var(--text-muted);font-size:14px;margin-bottom:0.75rem;">Excel (.xlsx) or CSV files work. Tally exports are perfect.</p>
+      <div style="background:var(--info-bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:13px;color:var(--navy);">📥 Don't have a spreadsheet? Download our free template.</span>
+        <a href="arthai_template.xlsx" download style="font-size:12px;font-weight:600;color:var(--navy);background:var(--white);border:1.5px solid var(--navy);padding:6px 14px;border-radius:6px;text-decoration:none;">Download Template</a>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Business Details</div>
+        <div class="form-group">
+          <label>Business Name</label>
+          <input type="text" id="u-biz-name" placeholder="e.g. Sharma Textiles" />
+        </div>
+        <div class="form-group">
+          <label>Business Type</label>
+          <select id="u-biz-type">
+            <option value="">Select your business type</option>
+            <option>Clothing / Fashion Brand</option>
+            <option>Manufacturing Unit</option>
+            <option>Retail Shop</option>
+            <option>Service Agency</option>
+            <option>Freelancer / Consultant</option>
+            <option>Food & Beverage</option>
+            <option>Ecommerce Store</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Biggest Challenge Right Now</label>
+          <select id="u-challenge">
+            <option value="">Select your biggest challenge</option>
+            <option>Understanding where money is going</option>
+            <option>Cash flow running tight</option>
+            <option>Marketing costs too high</option>
+            <option>Profit margins shrinking</option>
+            <option>Preparing for expansion</option>
+            <option>Managing debt or loans</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="white-card">
+        <div id="upload-area" class="upload-area" onclick="document.getElementById('file-input').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
+          <span class="upload-icon">📂</span>
+          <h3>Drop your file here or click to browse</h3>
+          <p>Supports .xlsx, .xls, .csv — Max 5MB</p>
+          <input type="file" id="file-input" accept=".xlsx,.xls,.csv" onchange="handleFileSelect(event)" />
+        </div>
+        <div class="trust-note">
+          🔒 Your file is read locally in your browser. Nothing is uploaded to any server.
+        </div>
+      </div>
+
+      <div class="white-card" style="background:#FFFBF0;border-color:#F0D870;">
+        <p style="font-size:13px;color:var(--navy);font-weight:500;margin-bottom:6px;">📋 Expected format</p>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.6;">Your spreadsheet should have columns like: <strong>Month, Revenue, Expenses</strong> (or similar). Any Tally P&L export or basic Excel sheet works. The AI will intelligently read whatever format you have.</p>
+      </div>
+
+      <div id="upload-error" class="error-box">Please fill in your business details and upload a file.</div>
+
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;" onclick="submitUpload()">
+        Generate My Report →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SCREEN 4: LOADING ═══════════════ -->
+<div id="screen-loading" class="screen">
+  <div style="text-align:center;padding:2rem;">
+    <div class="spinner"></div>
+    <div class="loading-text">Analyzing your finances...</div>
+    <p class="loading-sub" id="loading-msg">Reading your data</p>
+  </div>
+</div>
+
+<!-- ═══════════════ SCREEN 5: REPORT ═══════════════ -->
+<div id="screen-report" class="screen">
+  <nav>
+    <a href="#" class="logo" onclick="goTo('screen-welcome');return false;">
+      <div class="logo-icon">
+        <div class="logo-bar" style="height:10px;background:#1B2A4A;opacity:0.5;"></div>
+        <div class="logo-bar" style="height:16px;background:#1B2A4A;opacity:0.75;"></div>
+        <div class="logo-bar" style="height:24px;background:#D4A017;"></div>
+      </div>
+      <span class="logo-wordmark">Arth<span>AI</span></span>
+    </a>
+  </nav>
+
+  <div id="report-content" style="flex:1;overflow-y:auto;"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// CONFIGURATION — PASTE YOUR AICREDITS KEY BELOW
+// ═══════════════════════════════════════════
+const GEMINI_API_KEY = "sk-live-9e1b89e1c6ff62487697520741cef022904e7794491bb29dc30afcc3a4a086d8";
+// ═══════════════════════════════════════════
+
+let uploadedFileData = null;
+
+// Screen navigation
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Path selection
+function selectPath(path) {
+  document.querySelectorAll('.path-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  setTimeout(() => goTo(path === 'manual' ? 'screen-manual' : 'screen-upload'), 300);
+}
+
+// File drag and drop
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('upload-area').classList.add('dragover');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-area').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      uploadedFileData = json;
+
+      const area = document.getElementById('upload-area');
+      area.classList.add('file-selected');
+      area.innerHTML = `<p>✅ ${file.name} loaded successfully — ${json.length} rows found</p>`;
+    } catch(err) {
+      alert('Could not read file. Please ensure it is a valid Excel or CSV file.');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// Format currency
+function fmt(n) {
+  if (!n && n !== 0) return '—';
+  const num = parseFloat(n);
+  if (num >= 100000) return '₹' + (num/100000).toFixed(1) + 'L';
+  if (num >= 1000) return '₹' + num.toLocaleString('en-IN');
+  return '₹' + num;
+}
+
+// Manual form submission
+function submitManual() {
+  const bizName = document.getElementById('m-biz-name').value.trim();
+  const bizType = document.getElementById('m-biz-type').value;
+  const challenge = document.getElementById('m-challenge').value;
+  const m1Rev = parseFloat(document.getElementById('m1-rev').value) || 0;
+  const errBox = document.getElementById('manual-error');
+
+  if (!bizName || !bizType || m1Rev === 0) {
+    errBox.style.display = 'block';
+    return;
+  }
+  errBox.style.display = 'none';
+
+  const months = [];
+  for (let i = 1; i <= 3; i++) {
+    const rev = parseFloat(document.getElementById(`m${i}-rev`).value) || 0;
+    if (rev === 0) continue;
+    const material = parseFloat(document.getElementById(`m${i}-material`).value) || 0;
+    const salary = parseFloat(document.getElementById(`m${i}-salary`).value) || 0;
+    const marketing = parseFloat(document.getElementById(`m${i}-marketing`).value) || 0;
+    const rent = parseFloat(document.getElementById(`m${i}-rent`).value) || 0;
+    const electricity = parseFloat(document.getElementById(`m${i}-electricity`).value) || 0;
+    const other = parseFloat(document.getElementById(`m${i}-other`).value) || 0;
+    const totalExp = material + salary + marketing + rent + electricity + other;
+    const profit = rev - totalExp;
+    const margin = rev > 0 ? ((profit / rev) * 100).toFixed(1) : 0;
+
+    months.push({
+      month: document.getElementById(`m${i}-name`).value || `Month ${i}`,
+      revenue: rev, material, salary, marketing, rent, electricity, other,
+      totalExpenses: totalExp, profit, margin
+    });
+  }
+
+  const dataStr = months.map(m =>
+    `${m.month}: Revenue ₹${m.revenue}, Raw Material ₹${m.material}, Salary ₹${m.salary}, Marketing ₹${m.marketing}, Rent ₹${m.rent}, Electricity ₹${m.electricity}, Other ₹${m.other}, Total Expenses ₹${m.totalExpenses}, Profit ₹${m.profit}, Margin ${m.margin}%`
+  ).join('\n');
+
+  generateReport({ bizName, bizType, challenge, months, dataStr });
+}
+
+// Upload form submission
+function submitUpload() {
+  const bizName = document.getElementById('u-biz-name').value.trim();
+  const bizType = document.getElementById('u-biz-type').value;
+  const challenge = document.getElementById('u-challenge').value;
+  const errBox = document.getElementById('upload-error');
+
+  if (!bizName || !bizType || !uploadedFileData) {
+    errBox.style.display = 'block';
+    return;
+  }
+  errBox.style.display = 'none';
+
+  const dataStr = uploadedFileData.slice(0, 20).map(row => row.join(', ')).join('\n');
+  generateReport({ bizName, bizType, challenge, months: [], dataStr, isUpload: true });
+}
+
+// Loading messages
+const loadingMessages = [
+  "Reading your data...",
+  "Calculating profit margins...",
+  "Identifying cost patterns...",
+  "Spotting financial risks...",
+  "Generating recommendations...",
+  "Preparing your report..."
+];
+
+// Main report generation
+async function generateReport(context) {
+  goTo('screen-loading');
+  let msgIdx = 0;
+  const msgEl = document.getElementById('loading-msg');
+  const msgInterval = setInterval(() => {
+    msgEl.textContent = loadingMessages[msgIdx % loadingMessages.length];
+    msgIdx++;
+  }, 2000);
+
+  const prompt = `You are ArthAI, a CFO advisor built specifically for Indian small businesses. Analyze the following financial data and generate a comprehensive CFO insight report.
+
+BUSINESS CONTEXT:
+- Business Name: ${context.bizName}
+- Business Type: ${context.bizType}
+- Biggest Challenge: ${context.challenge || 'Not specified'}
+
+FINANCIAL DATA:
+${context.dataStr}
+
+Generate a JSON response with EXACTLY this structure (no markdown, no backticks, pure JSON only):
+{
+  "healthScore": <number 0-100>,
+  "healthLabel": "<one short phrase like 'Needs attention' or 'Healthy' or 'Critical'>",
+  "healthColor": "<one of: critical, warning, success>",
+  "summary": {
+    "avgRevenue": <number>,
+    "avgMargin": "<string like '34%'>",
+    "totalProfit": <number>
+  },
+  "alerts": [
+    {
+      "type": "<critical|warning|success|info>",
+      "title": "<short title>",
+      "body": "<2-3 sentences of specific insight with actual numbers from the data>"
+    }
+  ],
+  "months": [
+    {
+      "name": "<month name>",
+      "revenue": <number>,
+      "margin": "<string like '33%'>",
+      "marginColor": "<good|bad|neutral>"
+    }
+  ],
+  "expenses": [
+    {
+      "category": "<name>",
+      "amount": <number>,
+      "percentage": <number 0-100>,
+      "color": "<hex color>"
+    }
+  ],
+  "insights": [
+    {
+      "tag": "<Urgent|Watch|Opportunity|Context>",
+      "tagColor": "<red|amber|green|blue>",
+      "text": "<specific actionable insight with numbers>"
+    }
+  ],
+  "recommendations": [
+    {
+      "text": "<specific recommendation with numbers>",
+      "impact": "<quantified potential impact>",
+      "impactColor": "<success|warning|danger>"
+    }
+  ]
+}
+
+Rules:
+- Use actual numbers from the data, not placeholders
+- Be specific to the Indian business context
+- Reference India-specific benchmarks where relevant (GST, festive season, etc.)
+- Generate 2-3 alerts, 3-4 insights, 3-5 recommendations
+- Expenses should list the top cost categories from the data
+- Health score should reflect actual financial health based on margin trends, cost efficiency, and risk factors
+- Be direct and honest — don't sugarcoat problems`;
+
+  try {
+    const response = await fetch('https://api.aicredits.in/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GEMINI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'anthropic/claude-haiku-4-5',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    clearInterval(msgInterval);
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'API error');
+    }
+
+    const data = await response.json();
+    const rawText = data.choices[0].message.content.trim();
+    const cleanText = rawText.replace(/```json|```/g, '').trim();
+    const report = JSON.parse(cleanText);
+
+    renderReport(context.bizName, context.bizType, report, context.months);
+    goTo('screen-report');
+
+  } catch (err) {
+    clearInterval(msgInterval);
+    goTo('screen-path');
+    alert('Something went wrong: ' + err.message + '\n\nPlease check your API key and try again.');
+  }
+}
+
+// Render the report
+function renderReport(bizName, bizType, report, months) {
+  const needlePos = Math.min(Math.max(report.healthScore, 0), 100);
+  const scoreColor = report.healthScore >= 70 ? 'var(--success)' : report.healthScore >= 45 ? '#B7770D' : 'var(--danger)';
+
+  const alertsHTML = (report.alerts || []).map(a => `
+    <div class="alert ${a.type}">
+      <div class="alert-title">${a.title}</div>
+      <div class="alert-body">${a.body}</div>
+    </div>
+  `).join('');
+
+  const monthsData = report.months && report.months.length > 0 ? report.months : months;
+  const monthsHTML = monthsData.map(m => {
+    const color = m.marginColor === 'good' ? 'var(--success)' : m.marginColor === 'bad' ? 'var(--danger)' : 'var(--text-muted)';
+    const arrow = m.marginColor === 'good' ? ' ▲' : m.marginColor === 'bad' ? ' ▼' : '';
+    const rev = m.revenue ? fmt(m.revenue) : '—';
+    return `
+      <div class="month-card">
+        <div class="month-name">${m.name}</div>
+        <div class="month-rev">${rev}</div>
+        <div class="month-margin" style="color:${color}">Margin: ${m.margin}${arrow}</div>
+      </div>
+    `;
+  }).join('');
+
+  const maxExp = Math.max(...(report.expenses || []).map(e => e.amount), 1);
+  const expensesHTML = (report.expenses || []).map(e => `
+    <div class="bar-item">
+      <span class="bar-label">${e.category}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.min((e.amount/maxExp)*100,100)}%;background:${e.color || '#378ADD'};"></div></div>
+      <span class="bar-val">${fmt(e.amount)}</span>
+    </div>
+  `).join('');
+
+  const tagMap = { red: 'tag-red', amber: 'tag-amber', green: 'tag-green', blue: 'tag-blue' };
+  const insightsHTML = (report.insights || []).map(i => `
+    <div class="insight-card">
+      <span class="tag ${tagMap[i.tagColor] || 'tag-blue'}">${i.tag}</span>${i.text}
+    </div>
+  `).join('');
+
+  const impactColorMap = { success: 'var(--success)', warning: '#B7770D', danger: 'var(--danger)' };
+  const recsHTML = (report.recommendations || []).map((r, idx) => `
+    <div class="rec-item">
+      <span class="rec-num">0${idx+1}</span>
+      <div>
+        <div class="rec-text">${r.text}</div>
+        <div class="rec-impact" style="color:${impactColorMap[r.impactColor] || 'var(--success)'};">${r.impact}</div>
+      </div>
+    </div>
+  `).join('');
+
+  const now = new Date();
+  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const nextMonthStr = nextMonth.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  document.getElementById('report-content').innerHTML = `
+    <div class="report-container">
+
+      <div class="report-header">
+        <div>
+          <div class="report-biz">${bizName}</div>
+          <div class="report-meta">Financial Insight Report &nbsp;·&nbsp; Generated by ArthAI &nbsp;·&nbsp; ${now.toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'})}</div>
+        </div>
+        <span class="report-badge">${bizType}</span>
+      </div>
+
+      <div class="health-card">
+        <div class="health-row">
+          <span class="health-label">Business health score</span>
+          <span class="health-score" style="color:${scoreColor}">${report.healthScore} / 100 — ${report.healthLabel}</span>
+        </div>
+        <div class="health-track">
+          <div class="health-needle" style="left:${needlePos}%"></div>
+        </div>
+        <div class="health-axis"><span>Critical</span><span>Caution</span><span>Healthy</span><span>Excellent</span></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Avg Monthly Revenue</div>
+          <div class="stat-value">${fmt(report.summary?.avgRevenue)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Margin</div>
+          <div class="stat-value" style="color:${scoreColor}">${report.summary?.avgMargin || '—'}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Profit (3M)</div>
+          <div class="stat-value">${fmt(report.summary?.totalProfit)}</div>
+        </div>
+      </div>
+
+      ${alertsHTML}
+
+      ${monthsHTML ? `<div class="section-title">Revenue trend</div><div class="month-grid">${monthsHTML}</div>` : ''}
+
+      ${expensesHTML ? `
+        <div class="section-title">Where your money is going</div>
+        <div class="white-card">${expensesHTML}</div>
+      ` : ''}
+
+      <div class="section-title">Key insights</div>
+      ${insightsHTML}
+
+      <div class="section-title">Recommendations</div>
+      <div class="white-card">${recsHTML}</div>
+
+      <div class="report-footer">
+        <div class="footer-text">
+          <p>Generated by <strong>ArthAI</strong> &nbsp;·&nbsp; Next report due: ${nextMonthStr}</p>
+          <p>Questions? Contact Arya: <a href="mailto:aryapanchal755@gmail.com">aryapanchal755@gmail.com</a> &nbsp;·&nbsp; <a href="mailto:aryapanchal693@outlook.com">aryapanchal693@outlook.com</a></p>
+        </div>
+        <button class="btn-restart" onclick="goTo('screen-welcome')">New Report</button>
+      </div>
+
+      <p class="powered">ArthAI &nbsp;·&nbsp; Financial Clarity for Indian Business</p>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
